@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  # config:
+  #   import:
+  #     - classpath:database.yml        # 引入 database.yml（位于同一模块）
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/talksphere?useUnicode=true
+    username: talksphere_user
+    password: Aa123456...
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mybatis-plus:
+    mapper-locations: classpath*:/mapper/**/*.xml
+    configuration:
+    map-underscore-to-camel-case: true           
+logging:
+  level:
+    root: INFO
+# Other configurations can be added as needed.

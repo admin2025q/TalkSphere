@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author tt
- * @since 2025-05-08
+ * @since 2025-05-10
  */
 public interface AdminMenuMapper extends BaseMapper<AdminMenu> {
 

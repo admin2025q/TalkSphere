@@ -18,7 +18,7 @@ public class CodeGenerator {
                                 "talksphere_user",
                                 "Aa123456...").globalConfig(builder -> {
                                         builder.author("tt") // 设置作者
-                                                        .enableSwagger() // 开启 Swagger 模式
+                                                        // .enableSwagger() // 开启 Swagger 模式
                                                         .disableOpenDir() // 禁止打开输出目录
                                                         .outputDir(projectPath + "/src/main/java"); // 指定输出目录
                                 }).packageConfig(builder -> {

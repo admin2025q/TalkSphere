@@ -1,14 +1,3 @@
-server:
-  port: 8080
-
 spring:
-  config:
-    import:
-      - classpath:database.yml        # 引入 database.yml（位于同一模块）
-      
-logging:
-  level:
-    root: INFO
-    com.tt.adminservice: DEBUG
-
-# Other configurations can be added as needed.
+  profiles:
+    active: dev

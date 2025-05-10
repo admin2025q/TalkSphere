@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author tt
- * @since 2025-05-08
+ * @since 2025-05-10
  */
 @RestController
 @RequestMapping("/admin/admin-permission")
