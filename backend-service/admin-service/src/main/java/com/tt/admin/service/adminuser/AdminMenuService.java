@@ -1,4 +1,4 @@
-package com.tt.admin.service;
+package com.tt.admin.service.adminuser;
 
 import com.tt.admin.entity.AdminMenu;
 import com.baomidou.mybatisplus.extension.service.IService;

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <!-- 注册自定义转换器 -->
+    <conversionRule conversionWord="vthread" converterClass="com.tt.admin.handler.async.VirtualThreadConverter"/>
+
     <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%vthread] [%X{traceId}] %-5level %logger{36} - %msg%n"/>
     <property name="LOG_FILE" value="admin-service.log"/>
     <property name="LOG_PATH" value="./logfiles"/>
     <property name="MAX_FILE_SIZE" value="20MB"/>
     <property name="MAX_HISTORY" value="30"/>
-
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
@@ -29,7 +32,7 @@
         <root level="DEBUG">
             <appender-ref ref="CONSOLE"/>
         </root>
-        <logger name="com.example" level="DEBUG"/>
+        <logger name="com.tt" level="DEBUG"/>
         <logger name="com.baomidou.mybatisplus" level="DEBUG"/>
     </springProfile>
 
@@ -38,7 +41,7 @@
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </root>
-        <logger name="com.example" level="DEBUG"/>
+        <logger name="com.tt" level="DEBUG"/>
         <logger name="com.baomidou.mybatisplus" level="DEBUG"/>
     </springProfile>
 

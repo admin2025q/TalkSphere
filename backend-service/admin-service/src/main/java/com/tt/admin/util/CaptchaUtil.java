@@ -74,7 +74,7 @@ public class CaptchaUtil {
             ImageIO.write(image, "PNG", outputStream);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("Error ImageIO processing input: {}", e);
+            log.error("Error ImageIO processing input: ", e);
         }
 
         return captcha.toString();

@@ -61,6 +61,12 @@
             <version>8.0.33</version>
         </dependency>
 
+       <dependency>
+           <groupId>org.apache.commons</groupId>
+           <artifactId>commons-lang3</artifactId>
+           <version>3.17.0</version>
+       </dependency> 
+
         <!-- Lombok（可选，简化实体类） -->
         <dependency>
             <groupId>org.projectlombok</groupId>

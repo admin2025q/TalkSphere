@@ -1,0 +1,149 @@
+package com.tt.admin.handler;
+
+import com.tt.admin.util.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * @author tete
+ */
+@Slf4j
+@Component
+public class LoggingInterceptor implements HandlerInterceptor {
+
+    /**
+     * body 安全长度  -1 表示不限制
+     */
+    private static final Integer SENSITIVE_LENGTH = -1;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // 生成唯一请求ID
+        String requestId = UUID.randomUUID().toString();
+        MDC.put("requestId", requestId);
+
+        HttpServletRequest requestToUse = request;
+        if (!(request instanceof ContentCachingRequestWrapper)) {
+            requestToUse = new ContentCachingRequestWrapper(request);
+        }
+
+        // 记录请求信息
+        try {
+            Map<String, Object> requestLog = new HashMap<>();
+            requestLog.put("timestamp", System.currentTimeMillis());
+            requestLog.put("requestId", requestId);
+            requestLog.put("method", request.getMethod());
+            requestLog.put("url", request.getRequestURI());
+            requestLog.put("queryString", request.getQueryString());
+            requestLog.put("headers", getHeaders(request));
+            requestLog.put("parameters", request.getParameterMap());
+//            requestLog.put("body", getRequestBody(requestToUse));
+            log.info("Request: {}", JsonUtil.toJson(request));
+        } catch (Exception e) {
+            log.error("Failed to log request: {}", e.getMessage());
+        }
+
+        return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        // 确保响应是ContentCachingResponseWrapper类型
+        ContentCachingResponseWrapper responseWrapper;
+        if (response instanceof ContentCachingResponseWrapper responseof) {
+            responseWrapper = responseof;
+        }else {
+            responseWrapper = new ContentCachingResponseWrapper(response);
+        }
+        // 记录响应信息
+        try {
+            Map<String, Object> responseLog = new HashMap<>();
+            responseLog.put("timestamp", System.currentTimeMillis());
+            responseLog.put("requestId", MDC.get("requestId"));
+            responseLog.put("status", response.getStatus());
+            responseLog.put("headers", getHeaders(response));
+            responseLog.put("body", getResponseBody(responseWrapper));
+
+            log.info("Response: {}", JsonUtil.toJson(response));
+            // 将响应内容写回
+            responseWrapper.copyBodyToResponse();
+        } catch (Exception e) {
+            log.error("Failed to log response: {}", e.getMessage());
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    private String getHeaders(HttpServletRequest request) {
+        return Collections.list(request.getHeaderNames())
+                .stream()
+                .map(name -> name + ": " + request.getHeader(name))
+                .collect(Collectors.joining(", "));
+    }
+
+
+    private Map<String, String> getHeaders(HttpServletResponse response) {
+        Map<String, String> headers = new HashMap<>();
+        response.getHeaderNames()
+                .forEach(name -> headers.put(name, response.getHeader(name)));
+        return headers;
+    }
+
+    private String getResponseBody(ContentCachingResponseWrapper response) {
+        try {
+            byte[] content = response.getContentAsByteArray();
+            if (content.length > 0) {
+                return new String(content, response.getCharacterEncoding());
+            }
+        } catch (Exception e) {
+            log.error("Failed to read response body: {}", e.getMessage());
+        }
+        return "";
+    }
+
+    /**
+     * 敏感信息过滤
+     *
+     * @param body
+     * @return s
+     */
+    private String filterSensitiveData(String body) {
+        return body.replaceAll("\"password\":\"[^\"]+\"", "\"password\":\"[REDACTED]\"");
+    }
+
+    /**
+     * 限制日志Body大小（如最大1MB），避免大文件请求导致内存溢出。
+     *
+     * @param request
+     * @return s
+     */
+    private String getRequestBody(ContentCachingRequestWrapper request) {
+        try {
+            byte[] content = request.getContentAsByteArray();
+            if (SENSITIVE_LENGTH < 0) {
+                return new String(content, request.getCharacterEncoding());
+            }
+            if (content.length > SENSITIVE_LENGTH) {
+                return "[Body too large]";
+            }
+            if (content.length > 0) {
+                return new String(content, request.getCharacterEncoding());
+            }
+        } catch (Exception e) {
+            log.error("Failed to read request body: {}", e.getMessage());
+        }
+        return "";
+    }
+}

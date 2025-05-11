@@ -1,8 +1,8 @@
-package com.tt.admin.service.impl;
+package com.tt.admin.service.adminuser.impl;
 
 import com.tt.admin.entity.AdminUser;
 import com.tt.admin.mapper.AdminUserMapper;
-import com.tt.admin.service.AdminUserService;
+import com.tt.admin.service.adminuser.AdminUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

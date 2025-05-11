@@ -1,8 +1,8 @@
-package com.tt.admin.service.impl;
+package com.tt.admin.service.adminuser.impl;
 
 import com.tt.admin.entity.AdminPermission;
 import com.tt.admin.mapper.AdminPermissionMapper;
-import com.tt.admin.service.AdminPermissionService;
+import com.tt.admin.service.adminuser.AdminPermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
