@@ -7,7 +7,7 @@ const Login: React.FC = () => {
 
   const [_ck, setCk] = useState<string>('');
   // 用户名/邮箱
-  const [email, setEmail] = useState<string>('');
+  const [emailAndphone, setEmailAndphone] = useState<string>('');
   // 密码
   const [password, setPassword] = useState<string>('');
   // 验证码
@@ -27,8 +27,6 @@ const Login: React.FC = () => {
       setCk(_ck);
       // 将 _ck 存储到 localStorage
       // StorageUtil.setLocal(Constants.HEADER_CK, _ck); 
-
-
       // 将图片数据转换为 Blob
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
@@ -47,11 +45,11 @@ const Login: React.FC = () => {
     event.preventDefault(); // 阻止默认提交行为
     // 在这里处理表单数据，例如发送到后端
     console.log('表单已提交', _ck);
-    console.log('用户名/邮箱:', email);
+    console.log('用户名/邮箱:', emailAndphone);
     console.log('密码:', password);
     console.log('验证码:', captcha);
     const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
-    if (!email || !password || !captcha) {
+    if (!emailAndphone || !password || !captcha) {
       setMsg('请填写所有字段');
       modal?.showModal();
       return; 
@@ -61,7 +59,7 @@ const Login: React.FC = () => {
       method: 'POST',
       [Constants.HEADER_CK]: _ck,
       body: JSON.stringify({
-        email,  
+        emailAndphone,  
         password,
         captcha
       }),
@@ -100,8 +98,8 @@ const Login: React.FC = () => {
               type="text"
               id="email"
               placeholder="请输入用户名或邮箱"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={emailAndphone}
+              onChange={(e) => setEmailAndphone(e.target.value)}
               className="input input-bordered w-full bg-white/50 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
