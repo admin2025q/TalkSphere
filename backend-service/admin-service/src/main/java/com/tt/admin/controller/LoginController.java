@@ -1,14 +1,23 @@
 package com.tt.admin.controller;
 
+import com.tt.admin.contants.ResponseCode;
+import com.tt.admin.dto.LoginRequestDTO;
+import com.tt.admin.dto.LoginResultDTO;
 import com.tt.admin.service.adminuser.cache.AdminUserRedisKey;
+import com.tt.admin.service.checkservice.LoginService;
 import com.tt.admin.util.Base64Util;
 import com.tt.admin.util.CaptchaUtil;
 import com.tt.admin.util.RedisUtil;
 import com.tt.vo.ApiResponse;
 
+import io.netty.util.internal.StringUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,10 +36,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin")
 public class LoginController {
-
     private static final String _CK = "_ck";
 
-    private final RedisUtil redisUtil;
+    private final LoginService loginService;
 
     @GetMapping("/thread-info")
     public ApiResponse<String> getThreadInfo() {
@@ -53,13 +61,20 @@ public class LoginController {
         response.setHeader(_CK, encode);
         // 调用工具类生成验证码
         String captcha = CaptchaUtil.generateCaptcha(response.getOutputStream());
-        log.info("Generated captcha: {}", captcha);
-        redisUtil.setExpire(AdminUserRedisKey.getCaptchaKey(encode), captcha,60*1000);
+        response.setHeader(_CK, loginService.setAnonyUser(encode, captcha));
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody String body) throws IOException {
-        log.info("Login request body: {}", body);
+    public ApiResponse<LoginResultDTO> login(
+    HttpServletRequest request,
+    @Validated @RequestBody LoginRequestDTO requestDto) throws IOException {
+        LoginResultDTO resultDTO = new LoginResultDTO();
+        final String _ck = request.getHeader(_CK);
+        if (StringUtils.isBlank(_ck)) {
+            return ApiResponse.error(ResponseCode.CAPTCHA_KEY_MISSING,resultDTO);
+        }
+        requestDto.setCk(_ck);
+        return loginService.login(requestDto);
     }
 
 }

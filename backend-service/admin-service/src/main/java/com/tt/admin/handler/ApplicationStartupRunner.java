@@ -1,14 +1,22 @@
 package com.tt.admin.handler;
 import java.util.Arrays;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.tt.admin.repository.repositoryHandler.LocalCacheHandler;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class ApplicationStartupRunner implements CommandLineRunner {
+
+    private final List <LocalCacheHandler> localCacheHandlers;
 
     @Override
     public void run(String... args) throws Exception {
@@ -23,6 +31,7 @@ public class ApplicationStartupRunner implements CommandLineRunner {
     private void initializeCache() {
         log.info("Initializing cache...");
         // 你的缓存初始化逻辑
+        localCacheHandlers.forEach(LocalCacheHandler::refresh);
     }
 
     private void loadInitialData() {

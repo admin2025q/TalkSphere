@@ -15,7 +15,7 @@ public class CodeGenerator {
                 // 1. 创建代码生成器
                 FastAutoGenerator.create(
                                 "jdbc:mysql://127.0.0.1:3306/talksphere?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC",
-                                "talksphere_user",
+                                "talksphere",
                                 "Aa123456...").globalConfig(builder -> {
                                         builder.author("tt") // 设置作者
                                                         // .enableSwagger() // 开启 Swagger 模式
@@ -29,7 +29,7 @@ public class CodeGenerator {
                                                                                                                 // XML
                                                                                                                 // 文件生成路径
                                 }).strategyConfig(builder -> {
-                                        builder.addInclude("admin_user", "admin_permission", "admin_menu") // 设置需要生成的表名
+                                        builder.addInclude("admin_user_permission") // 设置需要生成的表名
                                                         .addTablePrefix("t_") // 设置过滤表前缀
                                                         .entityBuilder()
                                                         .enableLombok() // 启用 Lombok

@@ -17,9 +17,8 @@ import java.util.Map;
 @AllArgsConstructor
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class LogEvent {
-    // "REQUEST" 或 "RESPONSE"
-    private String type;
+public class RequestAndResponseLog {
+  
     // 请求路径
     private String url;
     // 客户端真实ip
@@ -30,8 +29,10 @@ public class LogEvent {
     private Map<String, String[]> params;
     // 请求头
     private Map<String, String> headers;
-    // 请求/响应 Body（截断后）
-    private String body;
+    // 请求 Body（截断后）
+    private String reqBody;
+    ///响应
+    private String repBody;
     // 响应状态码
     private Integer status;
 

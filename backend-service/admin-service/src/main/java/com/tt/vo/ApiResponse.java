@@ -1,5 +1,7 @@
 package com.tt.vo;
 
+import com.tt.admin.contants.ResponseCode;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -24,5 +26,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> error(int code, String message) {
         return new ApiResponse<>(code, message, null);
     }
-
+    public static <T> ApiResponse<T> error(ResponseCode responseCode,T data) {
+        return new ApiResponse<>(responseCode.getCode(), responseCode.getMessage(), data);
+    }
 }

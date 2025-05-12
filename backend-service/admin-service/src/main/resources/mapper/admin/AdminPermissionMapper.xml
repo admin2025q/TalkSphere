@@ -17,4 +17,9 @@
         id, name, code, description, create_time, update_time
     </sql>
 
+    <select id="selecList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from admin_permission limit 10000;
+    </select>
 </mapper>

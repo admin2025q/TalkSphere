@@ -52,15 +52,16 @@ public class LoggingFilter extends OncePerRequestFilter {
     private static final String[] EXCLUDE_CONTENTTYPE = {
             "image/png"
     };
-    @Value("${spring.profiles.active:default}") 
+    @Value("${spring.profiles.active:default}")
     private String evnactive;
-    
+
     // 10KB
     private static final int MAX_BODY_LENGTH = 1024 * 10;
     private static final String TRACE_ID_HEADER = "X-Trace-Id";
     private static final String MDC_TRACE_KEY = "traceId";
-   
+
     private final LoginService loginService;
+
     @Override
     public final void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -71,21 +72,21 @@ public class LoggingFilter extends OncePerRequestFilter {
         if (isNotDevEnv && StringUtils.isBlank(traceId)) {
             return;
         }
-        //TODO 请求重复校验
+        // TODO 请求重复校验
 
         MDC.put(MDC_TRACE_KEY, traceId);
         try {
             // 包装请求和响应以缓存 Body
             ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
-            // 记录请求信息（虚拟线程中异步执行）
-            // Thread.startVirtualThread(() -> logRequest(wrappedRequest));
-            logRequest(wrappedRequest,ipAddress);
+
             ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
             // 继续执行后续 Filter 和 Controller
             chain.doFilter(wrappedRequest, wrappedResponse);
-            // 记录响应信息
-            logResponse(wrappedResponse);
 
+            // TODO 记录请求信息（虚拟线程中异步执行）
+            // 一定要在 doFilter 之后执行，否则会导致请求体被消费掉
+            // Thread.startVirtualThread(() -> logRequest(wrappedRequest));
+            filterPrintLog(wrappedRequest, wrappedResponse, ipAddress);
             // 确保响应数据写回客户端
             wrappedResponse.copyBodyToResponse();
         } finally {
@@ -94,38 +95,44 @@ public class LoggingFilter extends OncePerRequestFilter {
 
     }
 
-    private void logRequest(ContentCachingRequestWrapper request,String clientRealIP) {
+    private void filterPrintLog(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response,
+            String clientRealIP) {
+        RequestAndResponseLog reqLog = logRequest(request, clientRealIP);
+        // 记录响应信息
+        RequestAndResponseLog repLog = logResponse(response);
+        log.info("[{},{}]", reqLog, repLog);
+    }
+
+    private RequestAndResponseLog logRequest(ContentCachingRequestWrapper request, String clientRealIP) {
         Map<String, String> headers = Collections.list(request.getHeaderNames())
                 .stream()
                 .collect(Collectors.toMap(name -> name, request::getHeader));
         String body = getTruncatedBody(request.getContentAsByteArray(), request.getCharacterEncoding());
-        LogEvent logEvent = LogEvent.builder()
-                .type("REQUEST")
+        RequestAndResponseLog logEvent = RequestAndResponseLog.builder()
                 .url(request.getRequestURI())
                 .ip(clientRealIP)
                 .method(request.getMethod())
                 .params(request.getParameterMap())
                 .headers(headers)
-                .body(body)
+                .reqBody(body)
                 .build();
-
-        log.info(logEvent.toString());
+        return logEvent;
     }
 
-    private void logResponse(ContentCachingResponseWrapper response) {
-        val builder = LogEvent.builder();
+    private RequestAndResponseLog logResponse(ContentCachingResponseWrapper response) {
+        val builder = RequestAndResponseLog.builder();
         String body = getTruncatedBody(response.getContentAsByteArray(), response.getCharacterEncoding());
         for (String excludePath : EXCLUDE_CONTENTTYPE) {
             if (excludePath.equalsIgnoreCase(response.getContentType())) {
-                builder.body(excludePath);
+                builder.repBody(body);
             } else {
-                builder.body(body);
+                builder.repBody(body);
             }
         }
-        val logEvent = builder.type("RESPONSE")
+        val logEvent = builder
                 .status(response.getStatus())
                 .build();
-        log.info(logEvent.toString());
+        return logEvent;
     }
 
     private String getTruncatedBody(byte[] bodyBytes, String encoding) {

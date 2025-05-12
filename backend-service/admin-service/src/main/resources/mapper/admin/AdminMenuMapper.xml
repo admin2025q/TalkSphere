@@ -20,4 +20,11 @@
         id, parent_id, name, path, icon, sort, visible, create_time, update_time
     </sql>
 
+    <select id="getAllMenus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from admin_menu
+        where visible =  1;
+    </select>
+
 </mapper>

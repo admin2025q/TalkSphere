@@ -1,6 +1,10 @@
 package com.tt.admin.mapper;
 
 import com.tt.admin.entity.AdminUser;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -12,5 +16,14 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2025-05-10
  */
 public interface AdminUserMapper extends BaseMapper<AdminUser> {
+
+     /**
+     * 根据用户名查询管理员用户
+     *
+     * @param username 用户名
+     * @return 管理员用户实体
+     */
+    @Select("SELECT * FROM admin_user WHERE username = #{username}")
+    AdminUser getUserByUsername(@Param("username") String username);
 
 }

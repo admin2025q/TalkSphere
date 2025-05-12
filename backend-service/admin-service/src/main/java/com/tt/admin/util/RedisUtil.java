@@ -35,7 +35,7 @@ public class RedisUtil {
     }
 
     // 设置过期时间
-    public void setExpire(String key, String value, long timeout) {
+    public void setExpire(String key, String value, Duration timeout) {
         stringRedisTemplate.opsForValue().set(key, value, timeout);
     }
 
