@@ -1,7 +1,10 @@
 package com.tt.admin.service.adminuser;
 
-import com.tt.admin.entity.AdminMenu;
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tt.admin.entity.dao.AdminMenu;
+import com.tt.admin.entity.vo.AdminMenuVo;
 
 /**
  * <p>
@@ -13,4 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AdminMenuService extends IService<AdminMenu> {
 
+    /**
+     * 获取所有菜单
+     * @return 菜单列表
+     * @param userId
+     * @return
+     */
+    List<AdminMenuVo> selectListByUid(Long userId);
 }

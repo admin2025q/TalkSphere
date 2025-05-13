@@ -1,7 +1,10 @@
 package com.tt.admin.service.adminuser;
 
-import com.tt.admin.entity.AdminPermission;
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tt.admin.entity.dao.AdminPermission;
+import com.tt.admin.entity.dao.MenuPermission;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AdminPermissionService extends IService<AdminPermission> {
 
+        List<MenuPermission> selectAllPermission();
 }

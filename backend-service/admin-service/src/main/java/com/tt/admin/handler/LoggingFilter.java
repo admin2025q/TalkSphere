@@ -1,13 +1,13 @@
 package com.tt.admin.handler;
 
+import com.tt.admin.util.IPUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,18 +16,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import com.tt.admin.service.checkservice.LoginService;
-import com.tt.admin.util.IPUtils;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * // TODO敏感信息过滤（如密码、token）
+ *
  * // TODO异步日志处理（使用AsyncAppender）
  * 请求唯一ID跟踪
  * // TODO慢请求阈值警告
@@ -60,7 +56,11 @@ public class LoggingFilter extends OncePerRequestFilter {
     private static final String TRACE_ID_HEADER = "X-Trace-Id";
     private static final String MDC_TRACE_KEY = "traceId";
 
-    private final LoginService loginService;
+    // TODO文件传输 就不打印了（如密码、token）
+    private static final String bigContent = "[==\uD83D\uDE04==]";
+
+    // TODO敏感信息过滤（如密码、token）
+    private static final String pwdContent = "==\uD83D\uDE04";
 
     @Override
     public final void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -96,27 +96,26 @@ public class LoggingFilter extends OncePerRequestFilter {
     }
 
     private void filterPrintLog(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response,
-            String clientRealIP) {
-        RequestAndResponseLog reqLog = logRequest(request, clientRealIP);
+            String clientRealIp) {
+        RequestAndResponseLog reqLog = logRequest(request, clientRealIp);
         // 记录响应信息
         RequestAndResponseLog repLog = logResponse(response);
         log.info("[{},{}]", reqLog, repLog);
     }
 
-    private RequestAndResponseLog logRequest(ContentCachingRequestWrapper request, String clientRealIP) {
+    private RequestAndResponseLog logRequest(ContentCachingRequestWrapper request, String clientRealIp) {
         Map<String, String> headers = Collections.list(request.getHeaderNames())
                 .stream()
                 .collect(Collectors.toMap(name -> name, request::getHeader));
         String body = getTruncatedBody(request.getContentAsByteArray(), request.getCharacterEncoding());
-        RequestAndResponseLog logEvent = RequestAndResponseLog.builder()
+        return RequestAndResponseLog.builder()
                 .url(request.getRequestURI())
-                .ip(clientRealIP)
+                .ip(clientRealIp)
                 .method(request.getMethod())
                 .params(request.getParameterMap())
                 .headers(headers)
                 .reqBody(body)
                 .build();
-        return logEvent;
     }
 
     private RequestAndResponseLog logResponse(ContentCachingResponseWrapper response) {
@@ -124,15 +123,12 @@ public class LoggingFilter extends OncePerRequestFilter {
         String body = getTruncatedBody(response.getContentAsByteArray(), response.getCharacterEncoding());
         for (String excludePath : EXCLUDE_CONTENTTYPE) {
             if (excludePath.equalsIgnoreCase(response.getContentType())) {
-                builder.repBody(body);
+                builder.repBody(excludePath + bigContent);
             } else {
                 builder.repBody(body);
             }
         }
-        val logEvent = builder
-                .status(response.getStatus())
-                .build();
-        return logEvent;
+        return builder.status(response.getStatus()).build();
     }
 
     private String getTruncatedBody(byte[] bodyBytes, String encoding) {

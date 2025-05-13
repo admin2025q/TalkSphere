@@ -1,6 +1,6 @@
 package com.tt.admin.service.impl;
 
-import com.tt.admin.entity.AdminUserPermission;
+import com.tt.admin.entity.dao.AdminUserPermission;
 import com.tt.admin.mapper.AdminUserPermissionMapper;
 import com.tt.admin.service.AdminUserPermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

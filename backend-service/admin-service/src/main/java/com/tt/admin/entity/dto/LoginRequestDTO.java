@@ -1,7 +1,4 @@
-package com.tt.admin.dto;
-
-import org.springframework.data.convert.ValueConverter;
-import org.springframework.validation.annotation.Validated;
+package com.tt.admin.entity.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -17,6 +14,7 @@ public class LoginRequestDTO {
     @NotBlank(message = "密码不能为空")
     private String password;
     @NotBlank(message = "验证码不能为空")
-    private String captcha; 
-    private String ck; // 验证码key
+    private String captcha;
+    // 验证码key
+    private String ck;
 }

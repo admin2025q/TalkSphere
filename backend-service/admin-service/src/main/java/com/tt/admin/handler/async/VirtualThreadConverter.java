@@ -3,6 +3,9 @@ package com.tt.admin.handler.async;
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+/**
+ * @author zt
+ */
 public class VirtualThreadConverter  extends ClassicConverter {
 
     @Override

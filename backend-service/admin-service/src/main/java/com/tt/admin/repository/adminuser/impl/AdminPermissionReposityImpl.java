@@ -10,13 +10,13 @@ import org.springframework.util.CollectionUtils;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tt.admin.entity.AdminMenu;
-import com.tt.admin.entity.AdminPermission;
-import com.tt.admin.entity.AdminUserPermission;
-import com.tt.admin.mapper.AdminMenuMapper;
+
+import com.tt.admin.entity.dao.AdminPermission;
+import com.tt.admin.entity.dao.AdminUserPermission;
+
 import com.tt.admin.mapper.AdminPermissionMapper;
 import com.tt.admin.mapper.AdminUserPermissionMapper;
-import com.tt.admin.repository.adminuser.AdminMenuRepository;
+
 import com.tt.admin.repository.adminuser.AdminPermissionReposity;
 import com.tt.admin.repository.repositoryHandler.LocalCacheHandler;
 
@@ -35,13 +35,15 @@ public class AdminPermissionReposityImpl extends LocalCacheHandler<AdminPermissi
     private static final String P_CACHE_LIST_KEY_PREFIX = "permiss:all";
 
     private final Cache<String, AdminPermission> cachep = Caffeine.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS) // 缓存 1 小时
-            .maximumSize(1000) // 最大缓存 100 个角色
+            // 缓存 1 小时
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            // 最大缓存 100 个角色
+            .maximumSize(1000)
             .build();
 
     private final Cache<String, List<AdminPermission>> cacheList = Caffeine.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS) // 缓存 1 小时
-            .maximumSize(1000) // 最大缓存 100 个角色
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            .maximumSize(1000)
             .build();
 
     public AdminPermission getAdminPermissionById(Long id) {
@@ -56,8 +58,6 @@ public class AdminPermissionReposityImpl extends LocalCacheHandler<AdminPermissi
 
     @Override
     public List<AdminPermission> selecListAll() {
-        adminPermissionMapper.selecList();
-
         List<AdminPermission> permissions = cacheList.getIfPresent(P_CACHE_LIST_KEY_PREFIX);
         if (!CollectionUtils.isEmpty(permissions)) {
             return permissions;
@@ -74,14 +74,12 @@ public class AdminPermissionReposityImpl extends LocalCacheHandler<AdminPermissi
     }
 
     @Override
-    public List<String> selectListByUid(Long userId) {
+    public List<AdminPermission> selectListByUid(Long userId) {
         List<AdminUserPermission> raltionList = adminUserPermissionMapper.selectListByUid(userId);
         List<AdminPermission> selecListAll = selecListAll();
-        List<String> permissionList = selecListAll.stream()
+        return selecListAll.stream()
                 .filter(item -> raltionList.stream().anyMatch(r -> r.getPermissionId().equals(item.getId())))
-                .map(AdminPermission::getCode)
                 .toList();
-        return permissionList;
     }
 
     @Override

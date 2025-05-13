@@ -3,7 +3,7 @@
 <mapper namespace="com.tt.admin.mapper.AdminPermissionMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.tt.admin.entity.AdminPermission">
+    <resultMap id="BaseResultMap" type="com.tt.admin.entity.dao.AdminPermission">
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="code" property="code" />
@@ -19,7 +19,7 @@
 
     <select id="selecList" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+            <include refid="Base_Column_List"/>
         from admin_permission limit 10000;
     </select>
 </mapper>

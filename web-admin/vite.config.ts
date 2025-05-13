@@ -22,6 +22,10 @@ export default defineConfig({
         changeOrigin: true, // 修改请求头中的 Origin
         // rewrite: (path) => path.replace(/^\/admin/, ''), // 去掉 /api 前缀
       },
+      '/login':{
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      }
     },
   },
   resolve: {

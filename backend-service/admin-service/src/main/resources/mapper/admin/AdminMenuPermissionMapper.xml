@@ -3,7 +3,7 @@
 <mapper namespace="com.tt.admin.mapper.AdminMenuPermissionMapper">
 
     <!-- 通用结果映射 -->
-    <resultMap id="BaseResultMap" type="com.tt.admin.entity.AdminMenuPermission">
+    <resultMap id="BaseResultMap" type="com.tt.admin.entity.dao.AdminMenuPermission">
         <result column="id" property="id" jdbcType="BIGINT"/>
         <result column="menu_id" property="menuId" jdbcType="BIGINT"/>
         <result column="permission_id" property="permissionId" jdbcType="BIGINT"/>
@@ -20,4 +20,21 @@
         update_time
     </sql>
 
+
+    <!-- selectMenuIdByPermissionId --> 
+
+    <!-- selectMenuIdByPermissionId --> 
+
+    <select id="selectMenuIdByPermissionId" resultType="com.tt.admin.entity.dao.AdminMenuPermission">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM admin_menu_permission
+        WHERE 1=1
+        <if test="pids != null and pids.size() > 0">
+             and permission_id in
+            <foreach item="pid" collection="pids" open="(" separator="," close=")">
+                #{pid}
+            </foreach>
+        </if>
+    </select>
 </mapper>

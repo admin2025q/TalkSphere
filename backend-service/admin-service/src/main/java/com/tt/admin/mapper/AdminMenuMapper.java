@@ -1,10 +1,9 @@
 package com.tt.admin.mapper;
 
-import com.tt.admin.entity.AdminMenu;
-
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tt.admin.entity.dao.AdminMenu;
 
 /**
  * <p>

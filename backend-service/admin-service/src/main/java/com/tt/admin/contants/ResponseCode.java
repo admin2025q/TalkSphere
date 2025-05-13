@@ -14,7 +14,7 @@ public enum ResponseCode {
     // 200 表示 HTTP 成功，101 表示业务错误
     CAPTCHA_KEY_MISSING(200101, "验证码key不能为空"),
     LOGIN_FAILED(200101, "登录失败"),
-    CAPTCHA_ERROR(200101, "验证码错误"),
+    CAPTCHA_ERROR(200101, "验证码错误或者过期"),
     USER_NOT_FOUND(200102, "用户不存在"),
     USERNAME_OR_PASSWORD_ERROR(200103, "用户名或密码错误");
 

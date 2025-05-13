@@ -1,7 +1,7 @@
 package com.tt.admin.service;
 
-import com.tt.admin.entity.AdminUserPermission;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tt.admin.entity.dao.AdminUserPermission;
 
 /**
  * <p>

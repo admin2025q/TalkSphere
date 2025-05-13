@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { request } from '@/utils/requestProxy';
 import { Constants } from '@/pgcontants/Contants';
-import { StorageUtil } from '@/utils/storage';
 
 const Login: React.FC = () => {
 
@@ -57,13 +56,21 @@ const Login: React.FC = () => {
       
     const response = await request(`${Constants.LOGIN_URL}?${Constants.TIMESTAMP_KEY}=${Date.now()}`, {
       method: 'POST',
-      [Constants.HEADER_CK]: _ck,
+      headers: {
+        'Content-Type': 'application/json', 
+        [Constants.HEADER_CK]: _ck,
+      },
       body: JSON.stringify({
         emailAndphone,  
         password,
         captcha
       }),
     });
+
+
+    const list = await request(`${Constants.USER_PAGE_LIST}?${Constants.TIMESTAMP_KEY}=${Date.now()}`, {
+      method: 'POST',})
+
 
 
   };

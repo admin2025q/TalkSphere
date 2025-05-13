@@ -3,7 +3,7 @@
 <mapper namespace="com.tt.admin.mapper.AdminMenuMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.tt.admin.entity.AdminMenu">
+    <resultMap id="BaseResultMap" type="com.tt.admin.entity.dao.AdminMenu">
         <id column="id" property="id" />
         <result column="parent_id" property="parentId" />
         <result column="name" property="name" />

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tt.admin.entity.AdminUser;
+import com.tt.admin.entity.dao.AdminUser;
 import com.tt.admin.mapper.AdminUserMapper;
 import com.tt.admin.service.adminuser.AdminUserService;
 import com.tt.admin.util.JsonUtil;

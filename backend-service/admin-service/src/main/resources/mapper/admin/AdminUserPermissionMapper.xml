@@ -3,7 +3,7 @@
 <mapper namespace="com.tt.admin.mapper.AdminUserPermissionMapper">
 
     <!-- 通用结果映射 -->
-    <resultMap id="BaseResultMap" type="com.tt.admin.entity.AdminUserPermission">
+    <resultMap id="BaseResultMap" type="com.tt.admin.entity.dao.AdminUserPermission">
         <result column="id" property="id" jdbcType="BIGINT"/>
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="permission_id" property="permissionId" jdbcType="BIGINT"/>
@@ -21,7 +21,7 @@
     </sql>
 
     <!-- 按用户名查询 -->
-    <select id="selectListByUid" resultType="com.tt.admin.entity.AdminUserPermission">
+    <select id="selectListByUid" resultType="com.tt.admin.entity.dao.AdminUserPermission">
         SELECT <include refid="Base_Column_List"/>
         FROM admin_user_permission
         WHERE user_id = #{userId}
